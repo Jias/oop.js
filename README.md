@@ -91,7 +91,7 @@ Demo: 定义一个类`Man`，它继承了`Person`类，并重写的`setName`方�
 
 #### 调用父类原型方法
 
-`.Super.`
+`.Super.method.call(this, options)`
 
 通过当前类，或当前类的实例的`Super`属性，都可以调用父类方法。即`Super`属性内部指向父类的prototype对象。
 
@@ -128,9 +128,9 @@ Demo: 定义一个类`Boy`，它继承了`Man`类，并重写的`setName`方法�
         this.Super._init.call(this, options); // 导致死循环
     } 
    
-#### 调用父类静态方法
+#### 调用父类静态方法/属性
 
-`.Parent.`
+`.Parent.method()`/`.Parent.attribute`
 
 通过当前类的`Parent`属性，可以调用父类的静态属性或方法。即`Parent`属性内部指向父类的构造函数。
 
