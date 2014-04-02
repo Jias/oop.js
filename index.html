@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Oop.js by Jias</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Oop.js</h1>
+        <h2>OOP in javascript</h2>
+        <a href="https://github.com/Jias/oop.js" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="oopjs" class="anchor" href="#oopjs"><span class="octicon octicon-link"></span></a>oop.js</h1>
+
+<p>用于创建通用类的模块</p>
+
+<h2>
+<a name="%E7%89%B9%E7%82%B9" class="anchor" href="#%E7%89%B9%E7%82%B9"><span class="octicon octicon-link"></span></a>特点</h2>
+
+<ul>
+<li>子类构造函数和子类实例对象都可以通过<code>Super</code>属性访问到父类构造函数的prototype对象所指向的对象。方便复杂情况的调用。（比较拗口，看下面的代码就比较简单）</li>
+<li>使用<code>Parent</code>作为指向父类构造函数的<code>key</code>，语意更明确。</li>
+<li>支持<code>mixin</code>。</li>
+<li>压缩后小于1k。</li>
+</ul><h2>
+<a name="%E8%AF%AD%E6%B3%95" class="anchor" href="#%E8%AF%AD%E6%B3%95"><span class="octicon octicon-link"></span></a>语法</h2>
+
+<h4>
+<a name="%E7%B1%BB%E5%AE%9A%E4%B9%89" class="anchor" href="#%E7%B1%BB%E5%AE%9A%E4%B9%89"><span class="octicon octicon-link"></span></a>类定义</h4>
+
+<p><code>oop.create(config)</code><br><code>oop.create(config, statics)</code></p>
+
+<ul>
+<li>config: {Object} optional 原型方法
+
+<ul>
+<li>mixin: {Array} 合并可复用的对象的方法，所有从该类创建的实例都拥有该方法</li>
+<li>_init: {Function} 初始化函数，注意，真正的构造函数是由Class返回的，init是被构造函数调用的</li>
+<li>otherMethod: {Function} 其他自定义的原型方法</li>
+</ul>
+</li>
+<li>statics : {Object} optional 静态属性
+
+<ul>
+<li>NAME: {String} 定义类的名称</li>
+<li>other: {Mixed} 其他自定义的静态属性或方法</li>
+</ul>
+</li>
+</ul><p>Demo: 定义一个<code>Person</code>类</p>
+
+<pre><code>var Person = oop.create({
+    _init : function (options) {
+        this.setName(options.name);
+    },
+    setName : function (name) {
+        this.name = 'person:' + name;
+    },
+    getName : function () {
+        return this.name;
+    }
+},{
+    NAME : 'Person'
+});
+
+var person = new Person({
+    name : 'foo'
+});
+
+person.getName(); // 'person:foo'
+</code></pre>
+
+<h4>
+<a name="%E7%B1%BB%E7%BB%A7%E6%89%BF" class="anchor" href="#%E7%B1%BB%E7%BB%A7%E6%89%BF"><span class="octicon octicon-link"></span></a>类继承</h4>
+
+<p><code>oop.create(parent, config)</code><br><code>oop.create(parent, config, statics)</code></p>
+
+<ul>
+<li>parent: {Class} 指定继承于哪个父类，若没有指定，则默认继承于Object对象</li>
+<li>config: 同上。</li>
+<li>statics: 同上。</li>
+</ul><p>Demo: 定义一个类<code>Man</code>，它继承了<code>Person</code>类，并重写的<code>setName</code>方法。</p>
+
+<pre><code>var Man = oop.create(Person, {
+    _init : function (options) {
+        // 调用父类构造
+        Man.Super._init.call(this, options);
+        this.setTodo(options.todo);
+    },
+    // override method
+    setName : function (name) {
+        this.name = 'man:' + name;
+    },
+    // new method
+    setTodo : function (todo) {
+        this.todo = this.todo || [];
+        this.todo.push(todo);           
+    },
+    // new method
+    getTodo : function (stringify) {
+        return stringify ? this.todo.join(' / ') : this.todo;
+    }
+},{
+    NAME : 'Man'
+});
+
+var man = new Man({
+    name : 'boo',
+    todo : 'Working Hard'
+});
+
+man.getName(); // 'man:boo'
+console.log(man.Super === Man.Super); // true
+</code></pre>
+
+<h4>
+<a name="%E8%B0%83%E7%94%A8%E7%88%B6%E7%B1%BB%E5%8E%9F%E5%9E%8B%E6%96%B9%E6%B3%95" class="anchor" href="#%E8%B0%83%E7%94%A8%E7%88%B6%E7%B1%BB%E5%8E%9F%E5%9E%8B%E6%96%B9%E6%B3%95"><span class="octicon octicon-link"></span></a>调用父类原型方法</h4>
+
+<p><code>.Super.method.call(this, options)</code></p>
+
+<p>通过当前类，或当前类的实例的<code>Super</code>属性，都可以调用父类方法。即<code>Super</code>属性内部指向父类的prototype对象。</p>
+
+<pre><code>当前类的实例.Super.method.call(this, options);
+当前类.Super.method.call(this, options);
+</code></pre>
+
+<p>Demo: 定义一个类<code>Boy</code>，它继承了<code>Man</code>类，并重写的<code>setName</code>方法。</p>
+
+<pre><code>var Boy = oop.create(Man, {
+    mixin : [eve],
+    _init : function (options) {
+        Boy.Super._init.call(this, options);
+    },  
+    // override method
+    setName : function (name) {
+        this.name = 'boy:' + name;
+    },
+    // only for demo
+    getTodo2 : function () {
+        return Boy.Super.getTodo.call(this, true);
+    }
+},{
+    NAME : 'Boy'
+});
+var boy = new Boy({
+    name : 'woo',
+    todo : 'Doing Homework'
+});
+</code></pre>
+
+<p>【注意】：对于两层以上的继承，<code>this.Super.xxx</code>写法必定导致死循环。如上面的示例中，<code>Boy</code>继承了<code>Man</code>，<code>Man</code>继承了<code>Person</code>，构成了两层继承，所以<code>Boy</code>类在调用父类方法时，应该使用<code>Boy.Super._init</code>调用父类构造方法。</p>
+
+<pre><code>_init : function () {
+    this.Super._init.call(this, options); // 导致死循环
+} 
+</code></pre>
+
+<h4>
+<a name="%E8%B0%83%E7%94%A8%E7%88%B6%E7%B1%BB%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E5%B1%9E%E6%80%A7" class="anchor" href="#%E8%B0%83%E7%94%A8%E7%88%B6%E7%B1%BB%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E5%B1%9E%E6%80%A7"><span class="octicon octicon-link"></span></a>调用父类静态方法/属性</h4>
+
+<p><code>.Parent.method()</code>/<code>.Parent.attribute</code></p>
+
+<p>通过当前类的<code>Parent</code>属性，可以调用父类的静态属性或方法。即<code>Parent</code>属性内部指向父类的构造函数。</p>
+
+<pre><code>当前类.Parent.method()
+当前类.Parent.attribute
+</code></pre>
+
+<h2>
+<a name="%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95" class="anchor" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="octicon octicon-link"></span></a>更新记录</h2>
+
+<ul>
+<li>2013-07-27 : 
+
+<ul>
+<li>创建文档</li>
+</ul>
+</li>
+<li>2013-08-14 : 
+
+<ul>
+<li>添加调用父类原型方法和静态属性的说明</li>
+</ul>
+</li>
+</ul>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Jias/oop.js/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Jias/oop.js/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Jias/oop.js"></a> is maintained by <a href="https://github.com/Jias">Jias</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
