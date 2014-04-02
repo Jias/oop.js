@@ -1,0 +1,27 @@
+{
+  "name": "oop.js",
+  "version": "1.0.0",
+  "description": "A tiny oop helper in javascript.",
+  "homepage": "http://jias.github.io/oop.js/",
+  "main": "src/oop.js",
+  "scripts": {},
+  "keywords": [
+    "javascript",
+    "oop",
+    "class"
+  ],
+  "author": {
+    "name": "gnosaij",
+    "email": "gnosaij@yeah.net",
+    "url": "http://jias.github.io/"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "grunt-cli": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "expect.js": "*",
+    "mocha": "*"
+  },
+  "readmeFilename": "README.md"
+}
