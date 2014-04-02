@@ -9,6 +9,10 @@
 * 支持`mixin`。
 * 压缩后小于1k。
 
+## 单测
+
+查看[单测](http://jias.github.io/oop.js/test/test.html)快速了解。
+
 ## 语法
 
 #### 类定义
